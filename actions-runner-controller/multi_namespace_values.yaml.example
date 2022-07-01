@@ -33,18 +33,15 @@ authSecret:
   github_app_installation_id: "21870103"
   github_app_private_key: |-
     -----BEGIN RSA PRIVATE KEY-----
-    MIIEogIBAAKCAQEAljn9TTrvJfxIKJbgjN/7lDWyAaKK8KmFRvzNUej+qLtBkvi4
-    h/VxtPs8Ujn7O7W29f4t8UQnIBD4sOVEU6wEFAv4xkPNm9dmZZYZXJxT4xUwko86
-    Co76HASKWY0rCGn5NM73rGZPvJr3VkNSixGZDmxneDEgC7p/16+cI++k77SzZ15e
-    Ns8rccoTzPSsUBTvgoGs8hHOl/yDYHIxj0Z1vPzfFtsEx5ymSPKxFTCWT/XyvV6C
-    FuAQmt3YBuBuUpM1OgmhfTIdFbKmAOxor4oeFAvad8vt+pGPjPaBubE8L/8VMvr8
-    UG9ROyjPSezyUN39QxoP6OFg6sS5FnXbhZaNFwIDAQABAoIBAHEFa9bg0e+IIFm5
-    OXODR+k3hJbKTTHGuCiyJV7MplsXlrwWN+7B8CwzICzUxnkju2TTOIldtvnfCts7
-    .......redacted........revoked..................................
-    LR+hk7cQS8DEF6GTGV3djzyRTQ3qI9tBUtmIWxqGKNnGGkSDdkvf4wHbg2j/2lpm
-    vIEdAoGAPvNbI1m0BJ/pxZy8qWuyj8qF63XbCbs1M4LQaSx1NnGMCCdgrDfdA/H7
-    h7WAkVT/lNaSbX/gsKA0SjSrATPVeDu+zPRrOVCoHeKJ4CKM+BYse6spuHWIBl6g
-    vGfg8d1muX0/9e2zTzVO5QnObUW5CmJYL8JcLRddA2NAPDE1F7k=
+    MIIEpAIBAAKCAQEAuFYkwJ9nXfsrXR4zum9NS+3E3mpH0nU86Cjvw0MIEKUkYZb8
+    TyZu1wjjo3LfAcvveodoqEQmlaYf/x5fIChlZJJiGoH3VP0y3FKVW6YvyJN6q7eK
+    9Jf1z5LH6pbi3Ty33/EGMp6/Wt5L9y97bQ2Nh+KSNRtAWvMFjoDdXh+eXD3sv1lS
+    FY0PiVjvlRAE8AYSdOnPzAXpvc9mG1t9M24yejFRhnt4WuPFkcJBmSpihQDKZfce
+    ....redacted private key........................................
+    PP/o+X8D9LX6GLQC9m91FbyaXpmFC8HQCrCJa0rSYe4RCWir2Cx/b/VhOoh54Xhd
+    Iw3Z8QKBgQDJ8pG8P7VinUt+VaAmgFLXLvSvRDwu5fMNgWS4lc7wB2p7iBLPsC1o
+    6TQy7nq3H7UMu/NccNjytusxNqcryqMmqfJsUUtu8VPbqMc2jw0jcPkdpCqMTEuj
+    8fwkb4KcrKnBtTu+y35sDzwB+aejXsYsuZhyjO4tSUFB2y1BSI6FHA==
     -----END RSA PRIVATE KEY-----
   ### GitHub PAT Configuration
   #github_token: ""

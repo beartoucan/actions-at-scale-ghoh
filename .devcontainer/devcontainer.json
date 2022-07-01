@@ -20,7 +20,6 @@
 	"features": {
 		"kubectl-helm-minikube": "latest",
 		"git": "latest",
-		"git-lfs": "latest",
 		"github-cli": "latest",
 		"azure-cli": "latest",
 		"powershell": "latest"

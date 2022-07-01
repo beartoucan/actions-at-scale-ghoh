@@ -174,7 +174,7 @@ az login
 az account list-locations
 
 # Create a resource group for our AKS cluster
-az group create --name GitHubActionsRunners --location westeurope
+az group create --name AKSGitHubRunners --location westeurope
 
 # Get list of resources in the resource group
 az group show --resource-group GitHubActionsRunners
@@ -188,7 +188,7 @@ az provider show -n Microsoft.OperationalInsights -o table
 # --name cannot exceed 63 characters and can only contain letters, 
 # numbers, or dashes (-).
 az aks create \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster \
   --enable-addons monitoring \
   --node-count 1 \
@@ -204,7 +204,7 @@ az aks create \
   # file. Specify a different location for your Kubernetes configuration file 
   # using --file.
 az aks get-credentials \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster
 
 # Verify
@@ -218,14 +218,14 @@ kubectl get nodes
 
 # Scale up
 az aks scale \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster \
   --node-count 3
 
 # Scale down
 # (OPTIONAL)
 az aks scale \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster \
   --node-count 1
 
@@ -246,21 +246,21 @@ watch -n 3 kubectl get nodes
   # that provides a balance of storage and throughput.
   # --name | 'registry_name': must conform to the following pattern: '^[a-zA-Z0-9]*$'
 az acr create \
-  --resource-group GitHubActionsRunners \
-  --name GitHubActionsOHACR \
+  --resource-group AKSGitHubRunners \
+  --name bcgithubactionsacr \
   --sku Basic
 
 # Integrate the new ACR with our existing AKS cluster
 az aks update \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster \
-  --attach-acr GitHubActionsOHACR
+  --attach-acr bcgithubactionsacr
 
 # Check that AKS can successfully connect to our ACR
 # 1. Get ACR FQDN
 ACR_URL=$(az acr show \
-  --resource-group GitHubActionsRunners \
-  --name GitHubActionsOHACR \
+  --resource-group AKSGitHubRunners \
+  --name bcgithubactionsacr \
   --query loginServer \
   --output tsv) \
   && echo $ACR_URL
@@ -268,7 +268,7 @@ ACR_URL=$(az acr show \
 # 2. Do the check
   # REPLACE VALUE OF LOGIN_SERVER WITH YOUR ACR FQDN
 az aks check-acr \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster \
   --acr $ACR_URL
 ```
@@ -278,7 +278,7 @@ az aks check-acr \
 ```bash
 # First create a public IP resource
 az network public-ip create \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name APGWPublicIp \
   --allocation-method Static \
   --sku Standard
@@ -286,24 +286,28 @@ az network public-ip create \
 # Create the AppGW VNet
 az network vnet create \
   --name appgwVNet \
-  --resource-group GitHubActionsRunners \
-  --address-prefix 11.0.0.0/8 \
+  --resource-group AKSGitHubRunners \
+  --address-prefix 10.8.0.0/16 \
   --subnet-name appgwSubnet \
-  --subnet-prefix 11.1.0.0/16
+  --subnet-prefix 10.8.1.0/24
 
 # Create application gateway
 az network application-gateway create \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersAPGW \
-  --location westeurope \
+  --location australiaeast \
   --sku Standard_v2 \
   --public-ip-address APGWPublicIp \
   --vnet-name appgwVNet \
-  --subnet appgwSubnet
+  --subnet appgwSubnet \
+  --capacity 2 \
+  --frontend-port 80 \
+  --http-settings-port 80 \
+  --priority 1000
 
 # Attach APGW to our AKS
 APPGW_ID=$(az network application-gateway show \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersAPGW \
   --query "id" \
   --output tsv) \
@@ -311,7 +315,7 @@ APPGW_ID=$(az network application-gateway show \
 
 # Enable APGW addon
 az aks enable-addons \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster \
   --addons ingress-appgw \
   --appgw-id $APPGW_ID
@@ -322,7 +326,7 @@ az aks enable-addons \
 # Get AKS Cluster associated resource group
 NODERESOURCEGROUP=$(az aks show \
   --name GitHubActionsRunnersK8sCluster \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --query "nodeResourceGroup" \
   --output tsv) \
   && echo $NODERESOURCEGROUP
@@ -345,7 +349,7 @@ AKSVNETID=$(az network vnet show \
 # Peer the AppGateway VNet to the AKS VNet
 az network vnet peering create \
   --name AppGWtoAKSVnetPeering \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --vnet-name appgwVNet \
   --remote-vnet $AKSVNETID \
   --allow-vnet-access
@@ -353,7 +357,7 @@ az network vnet peering create \
 # Get AppGateway VNet ID
 APPGWVNETID=$(az network vnet show \
   --name appgwVNet \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --query "id" \
   --output tsv) \
   && echo $APPGWVNETID
@@ -381,13 +385,13 @@ kubectl apply -f ingress/ingress.yaml --namespace default
 
 # Fetch the DNS alias
 APGW_FQDN=$(az network public-ip show \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name APGWPublicIp \
   --query dnsSettings.fqdn \
   --output tsv) \
   && echo $APGW_FQDN
 
-curl -G https://${APGW_FQDN}
+curl -G http://${APGW_FQDN}
 
 ```
 
@@ -395,12 +399,12 @@ curl -G https://${APGW_FQDN}
 
 ```bash
 ACR_URL=$(az acr show \
-  --resource-group GitHubActionsRunners \
-  --name GitHubActionsOHACR \
+  --resource-group AKSGitHubRunners \
+  --name bcgithubactionsacr \
   --query loginServer \
   --output tsv) \
   && echo $ACR_URL
-REGISTRY_NAME=GitHubActionsOHACR
+REGISTRY_NAME=bcgithubactionsacr
 CERT_MANAGER_REGISTRY=quay.io
 CERT_MANAGER_TAG=v1.6.1
 CERT_MANAGER_IMAGE_CONTROLLER=jetstack/cert-manager-controller
@@ -523,22 +527,22 @@ kubectl apply -f actions-runner-controller/autoscale_webhook.yaml --namespace de
 ```bash
 # Stop AKS
 az aks stop \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster
 
 # Stop application gateway
 az network application-gateway stop \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersAPGW
 
 # Start AKS
 az aks start \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersK8sCluster
 
 # Start application gateway
 az network application-gateway start \
-  --resource-group GitHubActionsRunners \
+  --resource-group AKSGitHubRunners \
   --name GitHubActionsRunnersAPGW
 
 # !!! IMPORTANT !!!
@@ -611,14 +615,14 @@ Then we need to tag and push the image to our Azure Container Registry:
 ```bash
 # Fetch ACR's FQDN
 ACR_URL=$(az acr show \
-  --resource-group GitHubActionsRunners \
-  --name GitHubActionsOHACR \
+  --resource-group AKSGitHubRunners \
+  --name bcgithubactionsacr \
   --query loginServer \
   --output tsv) \
   && echo $ACR_URL
 
 # Login to ACR
-az acr login --name GitHubActionsOHACR
+az acr login --name bcgithubactionsacr
 
 # Verify we're logged in
 cat ~/.docker/config.json | jq ".auths"

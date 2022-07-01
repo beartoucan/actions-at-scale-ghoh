@@ -79,6 +79,7 @@ tags
 # Custom files
 *.setup.bash
 values.yaml
+multi_namespace_values.yaml
 *.pem
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,helm,vim

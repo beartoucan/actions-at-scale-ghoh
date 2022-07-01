@@ -9,16 +9,16 @@ metadata:
 spec:
   tls:
     - hosts:
-      - githubactionsatscaleoh.westeurope.cloudapp.azure.com
+      - bcgithubrunners.australiaeast.cloudapp.azure.com
       secretName: tlsingress
   rules:
-  - host: githubactionsatscaleoh.westeurope.cloudapp.azure.com
+  - host: bcgithubrunners.australiaeast.cloudapp.azure.com
     http:
       paths:
-      - path: /altns/runners-scaler
+      - path: /btns/runners-scaler
         pathType: Prefix
         backend:
           service:
-            name: altns-github-webhook-server
+            name: btns-github-webhook-server
             port:
               number: 80
